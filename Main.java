@@ -1,0 +1,51 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        System.out.println("Please, specify the path to the file:");
+        BufferedReader readerToGetFilename = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader reader = new BufferedReader(new FileReader(readerToGetFilename.readLine()));
+        readerToGetFilename.close();
+        ArrayList list = new ArrayList<>();
+        for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+            int number = Integer.parseInt(line);
+            list.add(number);
+        }
+        reader.close();
+        Collections.sort(list);
+        System.out.println("90 percentile " + percentileFind(90, list)); // works
+        System.out.println("median " + medianFind(list));
+        System.out.println("average " + findAverage(list));
+        System.out.println("max " + list.get(list.size() - 1));
+        System.out.println("min " + list.get(0));
+    }
+
+
+    private static double percentileFind(int percentile, ArrayList<Integer> list) { // according to https://goodcalculators.com/percentile-calculator/
+        double a = ((percentile / 100.0) * list.size());
+        if ((a % 1) == 0) { // if true, its int
+            return ((list.get((int) a - 1) + list.get((int) a)) / 2);
+        } else {
+            int position = (int) Math.ceil(a);
+            return list.get(position - 1);
+        }
+    }
+
+    private static double medianFind(ArrayList<Integer> list) {
+        double a = list.size() / 2.0;
+        if ((a % 1) == 0) {
+            return (double)((list.get((int) a - 1) + list.get((int) a)) / 2);
+        } else
+            return list.get((int) a - 1);
+    }
+
+    private static double findAverage(ArrayList<Integer> list) {
+        int sum = list.stream().mapToInt(Integer::intValue).sum();
+        return ((double)sum/list.size());
+    }
+}
